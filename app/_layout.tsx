@@ -1,29 +1,52 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
+import style from "@/styles/index.styles";
+import { router, Stack } from "expo-router";
+import { Text, TouchableOpacity } from "react-native";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack>
+      <Stack.Screen
+        name="Register"
+        options={{
+          title: "your tasks",
+          headerStyle: { backgroundColor: "#26262a" },
+          headerTintColor: "white",
+          headerBackVisible: false,
+          headerRight: () => (
+            <TouchableOpacity style={style.registerRedirection} onPress={() => router.push("/Login")}>
+              <Text style={{ fontSize: 17 }}>login</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Login"
+        options={{
+          title: "your tasks",
+          headerStyle: { backgroundColor: "#26262a" },
+          headerTintColor: "white",
+          headerBackVisible: false,
+          headerRight: () => (
+            <TouchableOpacity style={style.registerRedirection} onPress={() => router.push("/Register")}>
+              <Text style={{ fontSize: 17 }}>Register</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="home"
+        options={{
+          title: "Tasks",
+          headerStyle: { backgroundColor: "#26262a" },
+          headerTintColor: "white",
+          headerBackVisible: false,
+          headerRight: () => (
+            <TouchableOpacity style={style.registerRedirection} onPress={() => router.push("/Login")}>
+              <Text style={{ fontSize: 17 }}>Log Out</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+    </Stack>
   );
 }
