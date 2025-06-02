@@ -1,7 +1,7 @@
 import style from "@/styles/index.styles";
 import { router, Stack } from "expo-router";
+import SecureStore from "expo-secure-store";
 import { Text, TouchableOpacity } from "react-native";
-
 export default function RootLayout() {
   return (
     <Stack>
@@ -41,7 +41,13 @@ export default function RootLayout() {
           headerTintColor: "white",
           headerBackVisible: false,
           headerRight: () => (
-            <TouchableOpacity style={style.registerRedirection} onPress={() => router.push("/Login")}>
+            <TouchableOpacity
+              style={style.registerRedirection}
+              onPress={async () => {
+                await SecureStore.deleteItemAsync("user_session");
+                router.push("/Login");
+              }}
+            >
               <Text style={{ fontSize: 17 }}>Log Out</Text>
             </TouchableOpacity>
           ),
