@@ -7,66 +7,63 @@ import { Keyboard, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback,
 import InputText from "../elements/InputText";
 import style from "../styles/index.styles";
 
+// Componente principal de la pantalla de registro
 export default function Register() {
-  // métodos para el manejo de rutado y uso del contexto global
-  const router = useRouter();
-  const auth = useContext(authContext);
+  const router = useRouter(); // Hook de navegación
+  const auth = useContext(authContext); // Acceso al contexto de autenticación
 
-  // Estados de almacenamiento para los datos del registro
+  // Estados locales para almacenar los datos del formulario
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Estado que maneja el resultado de la petición al servidor de Register
-  const [isRegister, setIsRegister] = useState("");
-  const [status, setStatus] = useState(false);
+  // Si el usuario ya está logueado, redirigimos automáticamente al home
 
-  // Efecto que redirige antes de renderizar si el usuario ya está autenticado
   useEffect(() => {
-    if (auth?.getter !== undefined) {
-      router.push("/home/CreateTask");
+    if (auth?.isLogin) {
+      router.replace("/home/CreateTask");
     }
-  }, [auth]);
+  }, [auth.isLogin]);
 
-  // función para hacer la petición al servidor y hacer un registro
-  const handlerFuncion = async () => {
+  // Función que maneja el registro del usuario
+  const handleRegister = async () => {
     try {
-      const res = await fetch("http://192.168.0.14:3000/register", {
+      // Enviamos los datos de registro al backend
+      const res = await fetch("http://192.168.0.21:3000/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        headers: { "Content-Type": "application/json" }, // Indicamos que enviamos JSON
+        body: JSON.stringify({ username, email, password }), // Enviamos los datos ingresados
       });
 
-      const data = await res.json();
+      const data = await res.json(); // Parseamos la respuesta a JSON
 
-      setStatus(res.ok);
-
-      setIsRegister(data.msg);
+      // Si el servidor respondió con éxito
+      if (res.ok) {
+        alert(data.msg); // Mostramos el mensaje de éxito
+        router.replace("/Login"); // Redirigimos a la pantalla de login
+      } else {
+        alert(data.msg || "Error al registrar usuario"); // Mostramos error si algo salió mal
+      }
     } catch (error) {
-      console.error("Error en el registro:", error);
-      alert("Hubo un problema con el registro. Intenta nuevamente.");
+      console.error("Error en el registro:", error); // Log en consola por si hubo una excepción
+      alert("Hubo un problema con el registro. Intenta nuevamente."); // Feedback para el usuario
     }
   };
 
-  // Efecto que maneja si el estado de la petición salio correctamente y aleta del que el usuario ya se registro
-  useEffect(() => {
-    if (status) {
-      alert(isRegister);
-      router.push("/Login");
-    }
-  }, [status, isRegister]);
-
+  // Render del formulario de registro
   return (
-    auth?.getter === undefined && (
+    !auth.isLogin && (
       <LinearGradient colors={["#6600a4", "#000000"]} style={style.background}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: "center" }} style={{ width: "100%" }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={style.registerForm}>
               <Text style={style.title}>Register</Text>
+              {/* Campos del formulario */}
               <InputText placeholder="username" styles={style.formInput} setValue={setUsername} />
               <InputText placeholder="@email" styles={style.formInput} setValue={setEmail} />
               <InputPassword placeholder="password" styles={style.formInput} setValue={setPassword} />
-              <TouchableOpacity onPress={handlerFuncion}>
+              {/* Botón que ejecuta el registro */}
+              <TouchableOpacity onPress={handleRegister}>
                 <Text style={style.registerFormButton}>Enviar</Text>
               </TouchableOpacity>
             </View>

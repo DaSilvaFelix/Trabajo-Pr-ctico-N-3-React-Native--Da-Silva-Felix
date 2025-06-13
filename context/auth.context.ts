@@ -1,3 +1,9 @@
 import { createContext } from "react";
 
-export const authContext = createContext<{ getter: string | undefined; setGetter: (v: string) => void } | undefined>(undefined);
+export const authContext = createContext<{
+  isLogin: boolean;
+  setIsLogin: (value: boolean) => void;
+}>({
+  isLogin: false,
+  setIsLogin: () => {},
+});
