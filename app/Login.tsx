@@ -15,7 +15,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://192.168.0.14:3000/login", {
+      const response = await fetch("http://192.168.0.21:3000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,16 +26,16 @@ export default function Login() {
 
       const data = await response.json();
 
-      if (data.sessionToken) await SecureStore.setItemAsync("user_session", data.sessionToken);
+      if (data.token) await SecureStore.setItemAsync("auth", data.token);
 
-      const sessionToken = await SecureStore.getItemAsync("user_session");
+      const token = await SecureStore.getItemAsync("auth");
 
-      if (!sessionToken) console.log("No hay sesión activa");
+      if (!token) console.log("No hay sesión activa");
 
       const req = await fetch("http://192.168.0.14:3000/getUser", {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${sessionToken}`,
+          Authorization: `${token}`,
           "Content-Type": "application/json",
         },
       });
